@@ -1,9 +1,11 @@
-FROM registry.redhat.io/ubi8/python-38:latest
-RUN INSTALL_PKGS=git
+# FROM registry.redhat.io/ubi8/python-38:latest
+FROM quay.io/centos/centos:latest
+RUN yum -y install git python3 python3-pip python3-devel python3-virtualenv
 RUN \
-  python3 -m venv ${APP_ROOT} && \
-  ${APP_ROOT}/bin/pip install --upgrade pip && \
-  ${APP_ROOT}/bin/pip install GitPython PyYAML jinja2
+  export APP_ROOT=/usr/src && \
+  python3 -m venv ${APP_ROOT}/venv && \
+  ${APP_ROOT}/venv/bin/pip3 install --upgrade pip && \
+  ${APP_ROOT}/venv/bin/pip3 install GitPython PyYAML jinja2
 COPY src /usr/src/site_defs_convert
 WORKDIR /usr/src/site_defs_convert
-CMD [ "python", "./site_defs_convert.py" ]
+CMD [ "${APP_ROOT}/venv/bin/python3", "./site_defs_convert.py" ]
