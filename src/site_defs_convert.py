@@ -2,6 +2,7 @@
 import yaml
 import json
 import os
+import shutil
 from jinja2 import Template
 from munch import Munch
 import configparser
@@ -25,7 +26,18 @@ if __name__ == "__main__":
     deployment=deployment, ssh_auth_keys_str=auth_keys))
   print(yaml.dump(cd))
 
+  shutil.rmtree('installmanifests', ignore_errors=True)
   # clone the repo
   git_ssh_identity_file = os.path.join('secrets', 'target_repo_private_key')
   git_ssh_cmd = 'ssh -i %s' % git_ssh_identity_file
-    repo = Repo.clone_from('git@gitlab.com:vtalikgr/installmanifests.git', 'installmanifests', branch='main')
+  repo = Repo.clone_from(
+    'git@gitlab.com:vtalikgr/installmanifests.git',
+    'installmanifests',
+    branch='main',
+    depth=1)
+  with open('installmanifests/infra_env.yaml', 'w') as ie:
+    yaml.dump(cd, ie)
+  repo.git.add('infra_env.yaml')
+  repo.git.commit('-a', '-m', 'test commit', author='vitus@dr.com')
+  
+  repo.git.push('origin', 'main')

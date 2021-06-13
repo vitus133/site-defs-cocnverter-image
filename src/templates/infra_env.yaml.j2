@@ -19,7 +19,8 @@ spec:
       {{ deployment.defs.agentlabelkey }}: {{ deployment.defs.agentlabelval }}
   pullSecretRef:
     name: {{ deployment.defs.pullsecretref }}
-  sshAuthorizedKey: '{{ ssh_auth_keys_str }}'
+  sshAuthorizedKey: |
+    {{ ssh_auth_keys_str }}
   # NmstateConfigLabelSelector associates NMStateConfigs for hosts that are
   # considered part of this installation environment.
   nmStateConfigLabelSelector:
