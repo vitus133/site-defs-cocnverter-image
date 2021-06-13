@@ -1,0 +1,28 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+metadata:
+  name: {{ deployment.defs.clustername }}-installenv
+  namespace: {{ deployment.defs.infraenvnamespace }}
+spec:
+  # ClusterRef is the reference to the single ClusterDeployment that will be installed from this InfraEnv.
+  # Future versions will allow for multiple ClusterDeployments and this reference will be removed.
+  clusterRef:
+    # Name is unique within a namespace to reference a cluster resource
+    name: {{ deployment.defs.clustername }}-deployment
+    # Namespace defines the space within which the cluster name must be unique.
+    namespace: {{ deployment.defs.infraenvnamespace }}
+
+  # AgentLabelSelector specifies a label that should be applied to Agents that boot from the installation media
+  # of this InfraEnv. This is how a user would identify which agents are associated with a particular InfraEnv.
+  agentLabelSelector:
+    matchLabels:
+      {{ deployment.defs.agentlabelkey }}: {{ deployment.defs.agentlabelval }}
+  pullSecretRef:
+    name: {{ deployment.defs.pullsecretref }}
+  sshAuthorizedKey: '{{ ssh_auth_keys_str }}'
+  # NmstateConfigLabelSelector associates NMStateConfigs for hosts that are
+  # considered part of this installation environment.
+  nmStateConfigLabelSelector:
+    matchLabels:
+      {{ deployment.defs.nmstatelabelkey }}: {{ deployment.defs.nmstatelabelval }}
+      #nmstate-label: cnfocto1-nmstate
